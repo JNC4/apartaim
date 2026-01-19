@@ -1,0 +1,30 @@
+{
+  "run_id": "20260112_091355",
+  "started_at": "2026-01-12T09:13:55.453997",
+  "settings": {
+    "model": {
+      "name": "qwen3-32b",
+      "temperature": 0.7,
+      "max_tokens": 1024,
+      "guesser_temperature": 0.3
+    },
+    "experiment": {
+      "num_turns": 3,
+      "conversations_per_condition": 50
+    },
+    "batch": {
+      "max_concurrency": 50,
+      "batch_size": 20
+    }
+  },
+  "scenario": {
+    "name": "user-eq-guesser",
+    "model_config": {
+      "unknown_model": "qwen3-32b",
+      "truthbot_model": "gpt-oss-120b",
+      "user_model": "hermes-70b",
+      "guesser_model": "hermes-70b"
+    }
+  },
+  "python_version": "3.14.2 (main, Jan  2 2026, 14:27:39) [GCC 15.2.1 20251112]"
+}
