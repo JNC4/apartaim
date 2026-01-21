@@ -1,0 +1,111 @@
+{
+  "secondOrder": {
+    "title": "Second-Order Manipulation",
+    "description": "Even if models act in good faith, their knowledge base could be poisoned by adversaries who influence training data. A manipulator could systematically inject biased content into web sources that models learn from, creating blind spots that affect both the primary AI and TruthBot equally."
+  },
+  "internalPreferences": {
+    "title": "Internal Model Preferences",
+    "description": "Models may have internal preferences that subtly influence their outputs, potentially aligning with or against certain viewpoints. If both the primary AI and TruthBot share these preferences (due to similar training), manipulative framing aligned with those preferences could go undetected."
+  },
+  "falsePositives": [
+    {
+      "type": "Stylistic Divergence",
+      "why": "Different phrasing, tone, or structure creates apparent deltas even when conveying the same information",
+      "consequence": "Overestimating manipulation when models simply have different communication styles"
+    },
+    {
+      "type": "Legitimate Perspective-Taking",
+      "why": "Steelman arguments intentionally omit counterarguments to explore a position deeply",
+      "consequence": "Mislabeling good-faith argumentation as manipulation"
+    },
+    {
+      "type": "Knowledge Asymmetry",
+      "why": "Models have different training data cutoffs or knowledge depth",
+      "consequence": "Flagging less-informed models as manipulative when they simply lack recent information"
+    },
+    {
+      "type": "Niche Expertise Differences",
+      "why": "Specialized knowledge depth varies significantly between models",
+      "consequence": "False flags on technical topics where one model has deeper domain expertise"
+    }
+  ],
+  "falseNegatives": [
+    {
+      "type": "Sophisticated Manipulation",
+      "why": "Subtle framing, ordering, and emphasis that preserves factual accuracy while steering conclusions",
+      "consequence": "Undetected manipulation that passes fact-checking but influences through presentation"
+    },
+    {
+      "type": "Emotional/Rhetorical Manipulation",
+      "why": "Our method focuses on factual content, not tone, emotional appeals, or rhetorical devices",
+      "consequence": "Missing manipulation vectors that operate through feelings rather than facts"
+    },
+    {
+      "type": "TruthBot Capability Ceiling",
+      "why": "TruthBot cannot detect manipulation in domains where it lacks knowledge",
+      "consequence": "Blind spots that mirror TruthBot's own limitations"
+    },
+    {
+      "type": "Coordinated Framing",
+      "why": "If both models share training biases, they may frame issues identically",
+      "consequence": "Systematic blind spots where both models agree on biased framing"
+    }
+  ],
+  "scalability": [
+    {
+      "dimension": "Computational Cost",
+      "note": "Doubles compute per interaction by requiring a second model response"
+    },
+    {
+      "dimension": "Latency",
+      "note": "Real-time applications may not tolerate the delay from sequential model calls"
+    },
+    {
+      "dimension": "Domain Coverage",
+      "note": "TruthBot must be competent across all domains the primary AI addresses"
+    },
+    {
+      "dimension": "Adversarial Adaptation",
+      "note": "Sophisticated manipulators can learn to evade detection over time"
+    },
+    {
+      "dimension": "Model Parity",
+      "note": "TruthBot needs similar capability level to effectively counter manipulation"
+    }
+  ],
+  "dualUseRisks": [
+    {
+      "title": "Training Better Manipulators",
+      "description": "By systematically documenting what manipulation techniques work and which get detected, this research inadvertently provides a curriculum for creating more sophisticated manipulators. Adversaries can study our detection methods and train AI systems specifically to evade them while maintaining persuasive influence."
+    },
+    {
+      "title": "Adversarial Arms Race Acceleration",
+      "description": "Publishing detection mechanisms invites adversarial adaptation. Each improvement in detection can be countered by adversaries who now understand the detection criteria. This creates an arms race where our research may ultimately benefit sophisticated bad actors more than defenders, as attackers only need to find one evasion technique while defenders must anticipate all possible attacks."
+    },
+    {
+      "title": "Manipulation Technique Codification",
+      "description": "Our experimental framework necessarily defines and categorizes manipulation techniques to test detection. This codification makes manipulation strategies more accessible and reproducible. What was previously implicit knowledge becomes explicit, lowering the barrier for creating manipulative AI systems."
+    },
+    {
+      "title": "Red-Teaming as Blueprint",
+      "description": "The manipulative AI conditions in our experiments demonstrate effective manipulation strategies that successfully shifted user beliefs. While intended for research, these prompts and techniques could be repurposed to create production manipulation systems. Our 'red team' becomes a blueprint for malicious actors."
+    }
+  ],
+  "futureResearch": [
+    {
+      "title": "Human Subject Testing",
+      "description": "Validate our findings with real humans instead of simulated user agents. Human belief dynamics, attention patterns, and susceptibility to manipulation may differ significantly from LLM simulations.",
+      "priority": "high"
+    },
+    {
+      "title": "Cross-Model Verification",
+      "description": "Investigate whether using different model families (e.g., Claude, GPT, Gemini, open-source models) confounds shared preferences enough to improve detection. If models from different families have sufficiently different biases, cross-checking could reveal manipulation that same-family verification misses.",
+      "priority": "high"
+    },
+    {
+      "title": "Adversarial Robustness Testing",
+      "description": "Test the framework against models specifically trained to evade detection while maintaining manipulative influence. This would reveal the ceiling of our approach.",
+      "priority": "medium"
+    }
+  ]
+}
