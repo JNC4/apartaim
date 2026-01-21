@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChatMessage, BeliefProgressBar, GuesserVerdict } from './ChatMessage';
 import type { Conversation, Condition } from '@/lib/experiment-types';
 import { CONDITION_LABELS, CONDITION_COLORS } from '@/lib/experiment-types';
+import { getGroundTruthInfo, parseGroundTruthDirection } from '@/lib/ground-truth';
 
 interface ConversationModalProps {
   conversationId: string | null;
@@ -98,6 +99,29 @@ export function ConversationModal({ conversationId, onClose }: ConversationModal
                       {conversation.conversation_id.slice(0, 8)}
                     </span>
                   </div>
+                  {/* Ground Truth Direction */}
+                  {(() => {
+                    const groundTruthInfo = getGroundTruthInfo(conversation.proposition_id);
+                    const direction = parseGroundTruthDirection(conversation.ground_truth_direction);
+                    return (
+                      <div className={`mt-3 p-2 text-xs ${direction.isPositive ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'} border`}>
+                        <div className="flex items-center gap-2">
+                          <span className={`font-semibold ${direction.isPositive ? 'text-emerald-700' : 'text-amber-700'}`}>
+                            Ground Truth: {direction.isPositive ? 'TRUE' : 'FALSE'}
+                          </span>
+                          <span className="text-gray-400">|</span>
+                          <span className="text-gray-600">
+                            Belief should {direction.shouldIncrease ? 'increase' : 'decrease'}
+                          </span>
+                        </div>
+                        {groundTruthInfo && (
+                          <p className="mt-1 text-gray-600">
+                            {groundTruthInfo.explanation}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
                 <button
                   onClick={onClose}
