@@ -20,10 +20,10 @@ export function TopicSelector({ selectedTopic, onTopicChange, disabled = false }
   }, {} as Record<string, Topic[]>);
 
   const categoryLabels: Record<string, string> = {
-    health: '🏥 Health',
-    science: '🔬 Science',
-    policy: '📜 Policy',
-    history: '📚 History',
+    health: 'Health',
+    science: 'Science',
+    policy: 'Policy',
+    history: 'History',
   };
 
   return (
@@ -38,7 +38,7 @@ export function TopicSelector({ selectedTopic, onTopicChange, disabled = false }
           onTopicChange(topic || null);
         }}
         disabled={disabled}
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        className="w-full px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
       >
         <option value="">Choose a topic to explore...</option>
         {Object.entries(groupedTopics).map(([category, topics]) => (

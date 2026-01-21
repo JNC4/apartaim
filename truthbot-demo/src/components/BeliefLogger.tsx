@@ -71,7 +71,7 @@ export function BeliefLogger({ topic, mode, hasResponses, truthbotPresent = true
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+    <div className="border border-gray-200 p-4 bg-gray-50">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center justify-between w-full text-left"
@@ -90,7 +90,7 @@ export function BeliefLogger({ topic, mode, hasResponses, truthbotPresent = true
           </p>
 
           {/* Before reading */}
-          <div className={`p-3 rounded ${beforeSubmitted ? 'bg-green-50' : 'bg-white'}`}>
+          <div className={`p-3 ${beforeSubmitted ? 'bg-green-50' : 'bg-white'}`}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Before reading the responses:
             </label>
@@ -111,7 +111,7 @@ export function BeliefLogger({ topic, mode, hasResponses, truthbotPresent = true
               <button
                 onClick={handleBeforeSubmit}
                 disabled={beforeSubmitted}
-                className={`px-3 py-1 text-sm rounded ${
+                className={`px-3 py-1 text-sm ${
                   beforeSubmitted
                     ? 'bg-gray-200 text-gray-500'
                     : 'bg-blue-500 text-white hover:bg-blue-600'
@@ -124,7 +124,7 @@ export function BeliefLogger({ topic, mode, hasResponses, truthbotPresent = true
 
           {/* After reading */}
           {hasResponses && beforeSubmitted && (
-            <div className={`p-3 rounded ${afterSubmitted ? 'bg-green-50' : 'bg-white'}`}>
+            <div className={`p-3 ${afterSubmitted ? 'bg-green-50' : 'bg-white'}`}>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 After reading the responses:
               </label>
@@ -145,7 +145,7 @@ export function BeliefLogger({ topic, mode, hasResponses, truthbotPresent = true
                 <button
                   onClick={handleAfterSubmit}
                   disabled={afterSubmitted}
-                  className={`px-3 py-1 text-sm rounded ${
+                  className={`px-3 py-1 text-sm ${
                     afterSubmitted
                       ? 'bg-gray-200 text-gray-500'
                       : 'bg-blue-500 text-white hover:bg-blue-600'
