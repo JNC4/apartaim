@@ -7,9 +7,9 @@ interface ErrorBannerProps {
 
 export function ErrorBanner({ error, onDismiss }: ErrorBannerProps) {
   return (
-    <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start justify-between">
+    <div className="bg-red-50 border border-red-200 p-4 flex items-start justify-between">
       <div className="flex items-start gap-3">
-        <span className="text-red-500 text-xl">⚠️</span>
+        <span className="text-red-500 text-sm font-bold">[!]</span>
         <div>
           <h4 className="font-medium text-red-800">Error</h4>
           <p className="text-sm text-red-600 mt-1">{error}</p>

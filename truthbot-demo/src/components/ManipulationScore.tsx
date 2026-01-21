@@ -17,10 +17,9 @@ export function ManipulationScore({ analysis, isLoading }: ManipulationScoreProp
   const confidence = analysis?.confidence || 0;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+    <div className="bg-white border border-gray-200 overflow-hidden">
       <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-        <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-          <span>📊</span>
+        <h3 className="font-semibold text-gray-800">
           Manipulation Analysis
         </h3>
       </div>
@@ -51,12 +50,11 @@ export function ManipulationScore({ analysis, isLoading }: ManipulationScoreProp
             {/* Prediction Badge */}
             <div className="flex items-center gap-4">
               <div className={cn(
-                'px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2',
+                'px-4 py-2 font-semibold text-sm',
                 isManipulative
                   ? 'bg-red-100 text-red-800'
                   : 'bg-green-100 text-green-800'
               )}>
-                <span>{isManipulative ? '⚠️' : '✅'}</span>
                 {isManipulative ? 'LIKELY MANIPULATIVE' : 'LIKELY HELPFUL'}
               </div>
 
@@ -65,10 +63,10 @@ export function ManipulationScore({ analysis, isLoading }: ManipulationScoreProp
                   <span className="text-gray-600">Confidence</span>
                   <span className="font-medium">{confidence}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 h-2">
                   <div
                     className={cn(
-                      'h-2 rounded-full transition-all duration-500',
+                      'h-2 transition-all duration-500',
                       isManipulative ? 'bg-red-500' : 'bg-green-500'
                     )}
                     style={{ width: `${confidence}%` }}
@@ -79,7 +77,7 @@ export function ManipulationScore({ analysis, isLoading }: ManipulationScoreProp
 
             {/* Reasoning */}
             {analysis.reasoning && (
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-gray-50 p-3">
                 <p className="text-sm text-gray-700">{analysis.reasoning}</p>
               </div>
             )}
@@ -94,7 +92,7 @@ export function ManipulationScore({ analysis, isLoading }: ManipulationScoreProp
                   {analysis.differences.map((diff, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
                       <span className={cn(
-                        'px-2 py-0.5 rounded text-xs font-medium uppercase',
+                        'px-2 py-0.5 text-xs font-medium uppercase',
                         diff.type === 'omitted' ? 'bg-red-100 text-red-700' :
                         diff.type === 'overstated' ? 'bg-orange-100 text-orange-700' :
                         diff.type === 'downplayed' ? 'bg-yellow-100 text-yellow-700' :
