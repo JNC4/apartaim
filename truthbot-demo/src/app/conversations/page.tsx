@@ -11,7 +11,7 @@ import { DEFAULT_FILTERS } from '@/lib/experiment-types';
 export default function ConversationsPage() {
   const [index, setIndex] = useState<ConversationIndex | null>(null);
   const [filters, setFilters] = useState<ConversationFilters>(DEFAULT_FILTERS);
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<ConversationIndexEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -90,8 +90,8 @@ export default function ConversationsPage() {
     overscan: 10,
   });
 
-  const handleConversationClick = useCallback((id: string) => {
-    setSelectedConversationId(id);
+  const handleConversationClick = useCallback((conv: ConversationIndexEntry) => {
+    setSelectedConversation(conv);
   }, []);
 
   if (loading) {
@@ -183,7 +183,7 @@ export default function ConversationsPage() {
                       >
                         <ConversationCard
                           conversation={conversation}
-                          onClick={() => handleConversationClick(conversation.id)}
+                          onClick={() => handleConversationClick(conversation)}
                         />
                       </div>
                     );
@@ -197,8 +197,8 @@ export default function ConversationsPage() {
 
       {/* Conversation Modal */}
       <ConversationModal
-        conversationId={selectedConversationId}
-        onClose={() => setSelectedConversationId(null)}
+        conversation={selectedConversation}
+        onClose={() => setSelectedConversation(null)}
       />
     </div>
   );

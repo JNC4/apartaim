@@ -9,7 +9,6 @@ import { RootCauseCards } from '@/components/limitations/RootCauseCards';
 import { LimitationsTable } from '@/components/limitations/LimitationsTable';
 import { ScalabilityChart } from '@/components/limitations/ScalabilityChart';
 import { FutureResearchCards } from '@/components/limitations/FutureResearchCards';
-import { ConversationModal } from '@/components/conversations/ConversationModal';
 import type { AnomalySummary, LimitationsContent } from '@/lib/limitations-types';
 
 const SECTIONS = [
@@ -24,8 +23,6 @@ export default function LimitationsPage() {
   const [anomalies, setAnomalies] = useState<AnomalySummary | null>(null);
   const [content, setContent] = useState<LimitationsContent | null>(null);
   const [activeSection, setActiveSection] = useState<string>('anomalies');
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
-
   useEffect(() => {
     Promise.all([
       fetch('/data/anomalies-summary.json').then((res) => res.json()),
@@ -114,7 +111,7 @@ export default function LimitationsPage() {
           <AnomalyOverview data={anomalies} />
 
           <div className="mt-12">
-            <AnomalyByTopicChart data={anomalies} onExampleClick={setSelectedConversation} />
+            <AnomalyByTopicChart data={anomalies} />
           </div>
         </ScrollySection>
 
@@ -130,7 +127,6 @@ export default function LimitationsPage() {
 
           <RootCauseCards
             causes={anomalies.rootCauses}
-            onExampleClick={setSelectedConversation}
           />
         </ScrollySection>
 
@@ -246,11 +242,6 @@ export default function LimitationsPage() {
         </div>
       </footer>
 
-      {/* Conversation Modal */}
-      <ConversationModal
-        conversationId={selectedConversation}
-        onClose={() => setSelectedConversation(null)}
-      />
     </div>
   );
 }

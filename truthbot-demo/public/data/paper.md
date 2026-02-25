@@ -40,7 +40,7 @@ However, these approaches share a critical limitation: they either require contr
 
 ### 1.3 Our Approach
 
-We propose TruthBot, a framework based on a simple insight: *manipulation through selective evidence is can be mitigated and detected through comparison with comprehensive evidence*. Our approach:
+We propose TruthBot, a framework based on a simple insight: *manipulation through selective evidence can be mitigated and detected through comparison with comprehensive evidence*. Our approach:
 
 1. **Parallel Truthful Inference**: For any user query, we simultaneously query a guaranteed-truthful intent model (TruthBot) that is explicitly prompted to present the strongest evidence from all perspectives, acknowledge scientific consensus, and avoid motivated reasoning.
 
@@ -144,7 +144,7 @@ The User Model is an AI simulating a user seeking information on a topic. It:
 - In TruthBot-present conditions, sees both Unknown Model and TruthBot responses
 - Reports updated belief score after the conversation (0-100 scale)
 
-We acknowledge that AI-simulated users differ from human users (see Limitations). It should, in practice correlate highly
+We acknowledge that AI-simulated users differ from human users (see Limitations).
 
 #### 3.2.4 Manipulation Guesser
 
@@ -423,7 +423,7 @@ We do not claim TruthBot is perfectly truthful, only that it provides a useful r
 
 #### 5.4.4 Topic Selection
 
-Our 19 propositions, while diverse, may not generalize to all domains. Topics with genuine expert disagreement may show different patterns than topics with clear consensus.
+Our 15 propositions, while diverse, may not generalize to all domains. Topics with genuine expert disagreement may show different patterns than topics with clear consensus.
 
 #### 5.4.5 Adversarial Robustness
 
@@ -448,11 +448,13 @@ We presented TruthBot, a framework for detecting and mitigating AI manipulation 
 5. **Effectiveness varies by topic**: TruthBot was most effective on topics with clear scientific consensus (vaccines, fluoride, GMOs) and less effective on politically contested topics.
 
 **Future Directions:**
-1. Human user studies to validate findings beyond AI simulation
+1. Validation of AI-simulated populations against human survey data
 2. Real-world deployment as browser extension
 3. Adversarial robustness testing
 4. Extension to multi-modal manipulation (images, audio)
 5. Integration with existing AI safety infrastructure
+
+The simulated user model used here highlights a broader methodological question: under what conditions can AI-simulated respondents serve as valid proxies for human populations? We are developing a validation framework comparing AI-simulated survey responses against established large-scale datasets (GSS, World Values Survey) to characterize when and how simulation fidelity breaks down. If validated, such methods could enable research on populations that are currently impossible or unethical to survey directly.
 
 ---
 

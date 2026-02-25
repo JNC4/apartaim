@@ -18,11 +18,12 @@ interface BeliefShiftChartProps {
   data: Record<Condition, number[]>;
   title?: string;
   showLegend?: boolean;
+  conditions?: Condition[];
 }
 
-export function BeliefShiftChart({ data, title, showLegend = true }: BeliefShiftChartProps) {
+export function BeliefShiftChart({ data, title, showLegend = true, conditions: filterConditions }: BeliefShiftChartProps) {
   const chartData = useMemo(() => {
-    const conditions: Condition[] = ['control_helpful', 'truthbot_helpful', 'control_manipulative', 'truthbot_manipulative'];
+    const conditions: Condition[] = filterConditions || ['control_helpful', 'truthbot_helpful', 'control_manipulative', 'truthbot_manipulative'];
 
     return conditions.map((condition) => {
       const values = data[condition] || [];

@@ -38,6 +38,15 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Conference Banner */}
+      <div className="bg-gray-900 text-gray-300 py-2 px-4 text-center text-sm">
+        Poster presentation at{' '}
+        <a href="https://www.iaseai.org/iaseai26" target="_blank" rel="noopener noreferrer" className="text-white font-medium hover:underline">
+          IASEAI 2026
+        </a>
+        {' '}— International Association for Safe and Ethical AI
+      </div>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 to-gray-900 text-white py-24 px-4">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
@@ -144,11 +153,15 @@ export default function HomePage() {
               </ul>
             </div>
             <StickyChart className="bg-white shadow-lg p-6 border border-gray-200">
-              <h3 className="text-lg font-semibold mb-4 text-center">Belief Shift by Condition</h3>
+              <h3 className="text-lg font-semibold mb-4 text-center">Baseline Belief Shift (No Intervention)</h3>
               <BeliefShiftChart
                 data={metrics.belief_distributions.by_condition as Record<Condition, number[]>}
+                conditions={['control_helpful', 'control_manipulative']}
                 showLegend={true}
               />
+              <p className="text-xs text-gray-500 mt-4 text-center">
+                Without intervention, manipulative AI shifts beliefs significantly more than helpful AI
+              </p>
             </StickyChart>
           </div>
         </ScrollySection>
@@ -160,6 +173,36 @@ export default function HomePage() {
             <p className="text-gray-700">
               TruthBot addresses manipulation through a two-pronged approach:
             </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 items-start mb-8">
+            <StickyChart className="bg-white shadow-lg p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold mb-4 text-center">Belief Shift: Control vs TruthBot</h3>
+              <BeliefShiftChart
+                data={metrics.belief_distributions.by_condition as Record<Condition, number[]>}
+                showLegend={true}
+              />
+            </StickyChart>
+            <div className="space-y-4">
+              <div className="bg-emerald-50 p-6 border border-emerald-200">
+                <div className="text-3xl font-bold text-emerald-700">
+                  {(metrics.overall.mean_helpfulness_preservation * 100).toFixed(0)}%
+                </div>
+                <div className="text-sm text-emerald-800 mt-1">Helpfulness Preserved</div>
+                <p className="text-xs text-emerald-600 mt-2">
+                  TruthBot maintains the beneficial effects of helpful AI
+                </p>
+              </div>
+              <div className="bg-amber-50 p-6 border border-amber-200">
+                <div className="text-3xl font-bold text-amber-700">
+                  {(metrics.overall.mean_manipulation_reduction * 100).toFixed(0)}%
+                </div>
+                <div className="text-sm text-amber-800 mt-1">Manipulation Reduced</div>
+                <p className="text-xs text-amber-600 mt-2">
+                  TruthBot significantly reduces the effect of manipulative AI
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -199,7 +242,7 @@ export default function HomePage() {
               color="green"
             />
             <StatCard
-              value={15}
+              value={metrics.propositions.length}
               label="Topics Tested"
               description="Across health, science, policy, and history domains"
               color="blue"
@@ -262,7 +305,9 @@ export default function HomePage() {
             TruthBot Research • {totalConversations.toLocaleString()} conversations analyzed
           </p>
           <p className="text-xs mt-2 text-gray-500">
-            Built for understanding and mitigating AI manipulation
+            <a href="https://www.reiuk.co.uk/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">Julius Chandler - REI UK</a>
+            {' • '}
+            <a href="https://www.berkeley.edu/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">University of California, Berkeley</a>
           </p>
         </div>
       </footer>

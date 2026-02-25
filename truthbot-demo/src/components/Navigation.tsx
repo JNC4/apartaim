@@ -5,8 +5,10 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { href: '/', label: 'Paper' },
+  { href: '/', label: 'Paper Overview' },
   { href: '/conversations', label: 'Conversations' },
+  { href: '/limitations', label: 'Limitations' },
+  { href: '/paper', label: 'Pre-print' },
 ];
 
 export function Navigation() {

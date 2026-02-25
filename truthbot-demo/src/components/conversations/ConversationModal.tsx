@@ -1,41 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChatMessage, BeliefProgressBar, GuesserVerdict } from './ChatMessage';
-import type { Conversation, Condition } from '@/lib/experiment-types';
+import type { ConversationIndexEntry, Condition } from '@/lib/experiment-types';
 import { CONDITION_LABELS, CONDITION_COLORS } from '@/lib/experiment-types';
 import { getGroundTruthInfo, parseGroundTruthDirection } from '@/lib/ground-truth';
 
 interface ConversationModalProps {
-  conversationId: string | null;
+  conversation: ConversationIndexEntry | null;
   onClose: () => void;
 }
 
-export function ConversationModal({ conversationId, onClose }: ConversationModalProps) {
-  const [conversation, setConversation] = useState<Conversation | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!conversationId) {
-      setConversation(null);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    fetch(`/api/conversations/${conversationId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Conversation not found');
-        return res.json();
-      })
-      .then(setConversation)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [conversationId]);
-
+export function ConversationModal({ conversation, onClose }: ConversationModalProps) {
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -45,7 +21,12 @@ export function ConversationModal({ conversationId, onClose }: ConversationModal
     return () => window.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
-  if (!conversationId) return null;
+  if (!conversation) return null;
+
+  const groundTruthInfo = getGroundTruthInfo(conversation.proposition_id);
+  const beliefDelta = conversation.belief_after - conversation.belief_before;
+  const isCorrectPrediction =
+    conversation.manipulation_guesser_prediction === conversation.ground_truth_manipulative;
 
   return (
     <AnimatePresence>
@@ -64,139 +45,183 @@ export function ConversationModal({ conversationId, onClose }: ConversationModal
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative bg-white shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
+          className="relative bg-white shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden"
         >
-          {loading ? (
-            <div className="flex items-center justify-center p-12">
-              <div className="animate-spin h-8 w-8 border-b-2 border-emerald-600" />
+          {/* Header */}
+          <div className="flex items-start justify-between p-4 border-b bg-gray-50">
+            <div className="flex-1 min-w-0 pr-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {conversation.proposition}
+              </h2>
+              <div className="flex flex-wrap items-center gap-1 mt-2 text-xs text-gray-500">
+                <span style={{ color: CONDITION_COLORS[conversation.condition] }}>
+                  {CONDITION_LABELS[conversation.condition]}
+                </span>
+                <span>/</span>
+                <span>{conversation.scenario_name}</span>
+                <span>/</span>
+                <span className="text-gray-400">
+                  {conversation.id.slice(0, 8)}
+                </span>
+              </div>
             </div>
-          ) : error ? (
-            <div className="p-8 text-center">
-              <p className="text-red-600">{error}</p>
-              <button
-                onClick={onClose}
-                className="mt-4 text-gray-600 hover:text-gray-800"
-              >
-                Close
-              </button>
-            </div>
-          ) : conversation ? (
-            <>
-              {/* Header */}
-              <div className="flex items-start justify-between p-4 border-b bg-gray-50">
-                <div className="flex-1 min-w-0 pr-4">
-                  <h2 className="text-lg font-semibold text-gray-900 truncate">
-                    {conversation.proposition}
-                  </h2>
-                  <div className="flex flex-wrap items-center gap-1 mt-2 text-xs text-gray-500">
-                    <span style={{ color: CONDITION_COLORS[conversation.condition] }}>
-                      {CONDITION_LABELS[conversation.condition]}
-                    </span>
-                    <span>/</span>
-                    <span>{conversation.scenario_name}</span>
-                    <span>/</span>
-                    <span className="text-gray-400">
-                      {conversation.conversation_id.slice(0, 8)}
-                    </span>
-                  </div>
-                  {/* Ground Truth Direction */}
-                  {(() => {
-                    const groundTruthInfo = getGroundTruthInfo(conversation.proposition_id);
-                    const direction = parseGroundTruthDirection(conversation.ground_truth_direction);
-                    return (
-                      <div className={`mt-3 p-2 text-xs ${direction.isPositive ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'} border`}>
-                        <div className="flex items-center gap-2">
-                          <span className={`font-semibold ${direction.isPositive ? 'text-emerald-700' : 'text-amber-700'}`}>
-                            Ground Truth: {direction.isPositive ? 'TRUE' : 'FALSE'}
-                          </span>
-                          <span className="text-gray-400">|</span>
-                          <span className="text-gray-600">
-                            Belief should {direction.shouldIncrease ? 'increase' : 'decrease'}
-                          </span>
-                        </div>
-                        {groundTruthInfo && (
-                          <p className="mt-1 text-gray-600">
-                            {groundTruthInfo.explanation}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })()}
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-200 transition-colors"
+            >
+              <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Ground Truth */}
+            {groundTruthInfo && (
+              <div className={`p-3 text-sm border ${groundTruthInfo.isTrue ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
+                <div className="flex items-center gap-2">
+                  <span className={`font-semibold ${groundTruthInfo.isTrue ? 'text-emerald-700' : 'text-amber-700'}`}>
+                    Ground Truth: {groundTruthInfo.isTrue ? 'TRUE' : 'FALSE'}
+                  </span>
                 </div>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-gray-200 transition-colors"
-                >
-                  <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                <p className="mt-1 text-gray-600 text-xs">
+                  {groundTruthInfo.explanation}
+                </p>
               </div>
+            )}
 
-              {/* Chat Content */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                {conversation.turns.map((turn, i) => (
-                  <div key={i} className="space-y-2">
-                    {/* User message */}
-                    <ChatMessage
-                      role="user"
-                      content={turn.user_message}
-                      turnNumber={turn.turn_number}
-                    />
+            {/* Belief Shift */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-gray-700">Belief Shift</h3>
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-400">{conversation.belief_before}</div>
+                  <div className="text-xs text-gray-500">Before</div>
+                </div>
+                <div className="flex-1 relative h-6 bg-gray-100">
+                  {/* Midpoint marker */}
+                  <div className="absolute top-0 bottom-0 left-1/2 w-px bg-gray-300" />
+                  {/* Before marker */}
+                  <div
+                    className="absolute top-1 w-3 h-3 bg-gray-400 -translate-x-1/2"
+                    style={{ left: `${conversation.belief_before}%` }}
+                  />
+                  {/* After marker */}
+                  <div
+                    className={`absolute top-1 w-3 h-3 -translate-x-1/2 ${
+                      conversation.normalized_belief_delta > 0 ? 'bg-emerald-500' : 'bg-red-500'
+                    }`}
+                    style={{ left: `${conversation.belief_after}%` }}
+                  />
+                  {/* Connecting line */}
+                  <div
+                    className={`absolute top-[10px] h-0.5 ${
+                      conversation.normalized_belief_delta > 0 ? 'bg-emerald-300' : 'bg-red-300'
+                    }`}
+                    style={{
+                      left: `${Math.min(conversation.belief_before, conversation.belief_after)}%`,
+                      width: `${Math.abs(beliefDelta)}%`,
+                    }}
+                  />
+                </div>
+                <div className="text-center">
+                  <div className={`text-2xl font-bold ${
+                    conversation.normalized_belief_delta > 0 ? 'text-emerald-600' : 'text-red-600'
+                  }`}>
+                    {conversation.belief_after}
+                  </div>
+                  <div className="text-xs text-gray-500">After</div>
+                </div>
+              </div>
+              <div className="flex items-center justify-center gap-6 text-sm">
+                <div>
+                  <span className="text-gray-500">Raw delta: </span>
+                  <span className={`font-semibold ${
+                    beliefDelta > 0 ? 'text-emerald-600' : beliefDelta < 0 ? 'text-red-600' : 'text-gray-600'
+                  }`}>
+                    {beliefDelta > 0 ? '+' : ''}{beliefDelta}
+                  </span>
+                </div>
+                <div className={`px-3 py-1 font-semibold ${
+                  conversation.normalized_belief_delta > 0
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : conversation.normalized_belief_delta < 0
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-gray-100 text-gray-700'
+                }`}>
+                  Normalized: {conversation.normalized_belief_delta > 0 ? '+' : ''}
+                  {conversation.normalized_belief_delta}
+                </div>
+              </div>
+            </div>
 
-                    {/* Unknown model response */}
-                    <ChatMessage
-                      role="unknown"
-                      content={turn.unknown_model_response}
-                      turnNumber={turn.turn_number}
-                    />
-
-                    {/* TruthBot response (if present) */}
-                    {turn.truthbot_response && (
-                      <ChatMessage
-                        role="truthbot"
-                        content={turn.truthbot_response}
-                        turnNumber={turn.turn_number}
+            {/* Guesser Prediction */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-gray-700">Manipulation Detection</h3>
+              {conversation.manipulation_guesser_prediction !== null ? (
+                <div className="p-3 bg-gray-50 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2 py-1 text-sm font-medium ${
+                        conversation.manipulation_guesser_prediction
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-green-100 text-green-700'
+                      }`}
+                    >
+                      <span
+                        className={`w-2 h-2 ${
+                          conversation.manipulation_guesser_prediction ? 'bg-red-500' : 'bg-green-500'
+                        }`}
                       />
-                    )}
-
-                    {/* Turn divider */}
-                    {i < conversation.turns.length - 1 && (
-                      <div className="flex items-center gap-2 py-2">
-                        <div className="flex-1 h-px bg-gray-200" />
-                        <span className="text-xs text-gray-400">
-                          Belief after turn {turn.turn_number}: {turn.user_belief_after}%
-                        </span>
-                        <div className="flex-1 h-px bg-gray-200" />
-                      </div>
+                      {conversation.manipulation_guesser_prediction ? 'Predicted Manipulative' : 'Predicted Helpful'}
+                    </span>
+                    {conversation.manipulation_guesser_confidence !== null && (
+                      <span className="text-sm text-gray-500">
+                        ({conversation.manipulation_guesser_confidence.toFixed(0)}% confidence)
+                      </span>
                     )}
                   </div>
-                ))}
-              </div>
+                  <div className="text-xs text-gray-500">
+                    Ground truth:{' '}
+                    <span className={conversation.ground_truth_manipulative ? 'text-red-600' : 'text-green-600'}>
+                      {conversation.ground_truth_manipulative ? 'Manipulative' : 'Helpful'}
+                    </span>
+                    {' \u2022 '}
+                    <span className={isCorrectPrediction ? 'text-green-600' : 'text-red-600'}>
+                      {isCorrectPrediction ? '\u2713 Correct' : '\u2717 Incorrect'}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 italic">
+                  No guesser prediction available (control condition)
+                </p>
+              )}
+            </div>
 
-              {/* Footer */}
-              <div className="border-t p-4 bg-gray-50 space-y-4">
-                {/* Belief Progress */}
-                <BeliefProgressBar
-                  beliefs={[
-                    conversation.belief_before,
-                    ...conversation.turns.map((t) => t.user_belief_after),
-                  ]}
-                  labels={[
-                    'Start',
-                    ...conversation.turns.map((t) => `T${t.turn_number}`),
-                  ]}
-                />
-
-                {/* Guesser Verdict */}
-                <GuesserVerdict
-                  prediction={conversation.manipulation_guesser_prediction}
-                  confidence={conversation.manipulation_guesser_confidence}
-                  groundTruth={conversation.ground_truth_manipulative}
-                />
-              </div>
-            </>
-          ) : null}
+            {/* Metadata */}
+            <div className="pt-3 border-t">
+              <dl className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <dt className="text-gray-500 text-xs">Category</dt>
+                  <dd className="font-medium text-gray-900 capitalize">{conversation.category}</dd>
+                </div>
+                <div>
+                  <dt className="text-gray-500 text-xs">Model Config</dt>
+                  <dd className="font-medium text-gray-900">{conversation.model_config}</dd>
+                </div>
+                <div>
+                  <dt className="text-gray-500 text-xs">TruthBot Present</dt>
+                  <dd className="font-medium text-gray-900">{conversation.truthbot_present ? 'Yes' : 'No'}</dd>
+                </div>
+                <div>
+                  <dt className="text-gray-500 text-xs">Condition</dt>
+                  <dd className="font-medium text-gray-900">{CONDITION_LABELS[conversation.condition]}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>
